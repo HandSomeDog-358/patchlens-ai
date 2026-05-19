@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: patchlens-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-patchlens}
+      POSTGRES_USER: ${POSTGRES_USER:-patchlens}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-patchlens}
+    ports:
+      - "5432:5432"
+    volumes:
+      - patchlens-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U patchlens -d patchlens"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+    container_name: patchlens-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-patchlens}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-patchlens}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-patchlens}
+      PATCHLENS_ADMIN_USERNAME: ${PATCHLENS_ADMIN_USERNAME:-admin}
+      PATCHLENS_ADMIN_PASSWORD: ${PATCHLENS_ADMIN_PASSWORD:-patchlens-admin}
+      PATCHLENS_SECRET_KEY: ${PATCHLENS_SECRET_KEY:-patchlens-dev-secret-change-me}
+      PATCHLENS_AI_REVIEWER: ${PATCHLENS_AI_REVIEWER:-mock}
+      PATCHLENS_GITHUB_API_BASE_URL: ${PATCHLENS_GITHUB_API_BASE_URL:-https://api.github.com}
+      PATCHLENS_GITHUB_ACCESS_TOKEN: ${PATCHLENS_GITHUB_ACCESS_TOKEN:-}
+      PATCHLENS_GITHUB_WEBHOOK_SECRET: ${PATCHLENS_GITHUB_WEBHOOK_SECRET:-dev-secret}
+      PATCHLENS_GITEE_API_BASE_URL: ${PATCHLENS_GITEE_API_BASE_URL:-https://gitee.com/api/v5}
+      PATCHLENS_GITEE_ACCESS_TOKEN: ${PATCHLENS_GITEE_ACCESS_TOKEN:-}
+      PATCHLENS_GITEE_WEBHOOK_SECRET: ${PATCHLENS_GITEE_WEBHOOK_SECRET:-dev-secret}
+      PATCHLENS_GITEA_API_BASE_URL: ${PATCHLENS_GITEA_API_BASE_URL:-}
+      PATCHLENS_GITEA_ACCESS_TOKEN: ${PATCHLENS_GITEA_ACCESS_TOKEN:-}
+      PATCHLENS_GITEA_WEBHOOK_SECRET: ${PATCHLENS_GITEA_WEBHOOK_SECRET:-dev-secret}
+    ports:
+      - "8080:8080"
+
+  console:
+    build:
+      context: ./frontend
+    container_name: patchlens-console
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+
+volumes:
+  patchlens-postgres-data:
