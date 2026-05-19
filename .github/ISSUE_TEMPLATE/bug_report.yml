@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible PatchLens AI problem.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please remove secrets, tokens, private code, and proprietary diffs before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: "0.1.0-alpha or commit SHA"
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Platform provider
+      options:
+        - GitHub
+        - Gitee
+        - Gitea
+        - Other
+  - type: dropdown
+    id: target
+    attributes:
+      label: Review target
+      options:
+        - Pull request
+        - Commit
+        - Configuration
+        - Other
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Describe the smallest reproducible flow.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include sanitized logs if useful.
+    validations:
+      required: true
