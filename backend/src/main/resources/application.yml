@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  servlet:
+    session:
+      timeout: 8h
+      cookie:
+        http-only: true
+        same-site: strict
+
+spring:
+  application:
+    name: patchlens-api
+  datasource:
+    url: jdbc:postgresql://localhost:5432/patchlens
+    username: patchlens
+    password: patchlens
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  ai:
+    model:
+      chat: none
+      embedding: none
+      image: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: none
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+patchlens:
+  security:
+    admin-username: ${PATCHLENS_ADMIN_USERNAME:admin}
+    admin-password: ${PATCHLENS_ADMIN_PASSWORD:patchlens-admin}
+    secret-key: ${PATCHLENS_SECRET_KEY:patchlens-dev-secret-change-me}
+  ai-reviewer: ${PATCHLENS_AI_REVIEWER:mock}
+  review:
+    default-max-inline-comments: 5
+    default-min-confidence: 0.75
+  github:
+    webhook-secret: ${PATCHLENS_GITHUB_WEBHOOK_SECRET:dev-secret}
+    api-base-url: ${PATCHLENS_GITHUB_API_BASE_URL:https://api.github.com}
+    access-token: ${PATCHLENS_GITHUB_ACCESS_TOKEN:}
+  gitee:
+    webhook-secret: ${PATCHLENS_GITEE_WEBHOOK_SECRET:dev-secret}
+    api-base-url: ${PATCHLENS_GITEE_API_BASE_URL:https://gitee.com/api/v5}
+    access-token: ${PATCHLENS_GITEE_ACCESS_TOKEN:}
+  gitea:
+    webhook-secret: ${PATCHLENS_GITEA_WEBHOOK_SECRET:dev-secret}
+    api-base-url: ${PATCHLENS_GITEA_API_BASE_URL:}
+    access-token: ${PATCHLENS_GITEA_ACCESS_TOKEN:}
