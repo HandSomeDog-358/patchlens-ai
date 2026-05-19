@@ -1,0 +1,2 @@
+ALTER TABLE review_tasks
+    ADD COLUMN target_type VARCHAR(32) NOT NULL DEFAULT 'PULL_REQUEST';
